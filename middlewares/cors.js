@@ -1,7 +1,7 @@
 // Массив доменов, с которых разрешены кросс-доменные запросы
 const allowedCors = [
-  'https://tarnakova.mesto.nomoredomains.rocks',
-  'http://tarnakova.mesto.nomoredomains.rocks',
+  'https://movies-explorer.alina..nomoreparties.sbs',
+  'http://movies-explorer.alina.nomoreparties.sbs',
   'https://localhost:3000',
   'http://localhost:3000',
 ];

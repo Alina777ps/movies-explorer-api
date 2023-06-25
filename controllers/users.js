@@ -12,7 +12,8 @@ const SALT_ROUNDS = 10;
 // возвращает информацию о пользователе (email и имя)
 // GET /users/me
 module.exports.getUser = (req, res, next) => {
-  User.find({})
+  const { id } = req.user;
+  User.findById(id)
     .then((users) => res.send(users))
     .catch(next);
 };
@@ -33,7 +34,9 @@ module.exports.updateUser = (req, res, next) => {
     .orFail()
     .then((user) => res.send({ user }))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь уже существует'));
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError(
           'Переданы некорректные данные при обновлении профиля.',
         ));
@@ -89,7 +92,7 @@ module.exports.login = (req, res, next) => {
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) throw new UnauthorizedError('Неправильные почта или пароль');
         const token = getJwtToken(user.id);
-        return res.send({ token });
+        return res.send({ token, message: 'Вы успешно авторизовались' });
       });
     })
     .catch(next);

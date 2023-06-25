@@ -9,7 +9,8 @@ const ForbiddenError = require('../errors/ForbiddenError');
 // возвращает все сохранённые текущим  пользователем фильмы
 // GET /movies
 module.exports.getMovie = (req, res, next) => {
-  Movie.find({})
+  const { id } = req.user;
+  Movie.find({ owner: id })
     .then((movie) => res.send(movie))
     .catch(next);
 };
@@ -49,7 +50,7 @@ module.exports.createMovie = (req, res, next) => {
     owner: id,
   })
     .then((movie) => {
-      res.send(movie);
+      res.send({ movie, message: 'Фильм успешно добавлен' });
     })
     .catch((err) => {
       if (
@@ -79,7 +80,7 @@ module.exports.deleteMovie = (req, res, next) => {
       } return Movie.findByIdAndDelete(movieId);
     })
     .then((deletedMovie) => {
-      res.send(deletedMovie);
+      res.send({ deletedMovie, message: 'Фильм успешно удален' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
